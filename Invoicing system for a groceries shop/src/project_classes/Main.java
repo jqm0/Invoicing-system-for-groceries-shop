@@ -35,7 +35,17 @@ public class Main {
 				                	sh.loadData();
 				                    break;
 				                case 2:
-				                    // handle Set Shop Name option
+				                	System.out.println("Please enter shop name : ");
+				                    sh.setShopName(scanner.next());
+				                	System.out.println("1 - store it in new Table ");
+				                	System.out.println("2 - store it in exicting Table ");
+				                	if(scanner.nextInt() == 1) {
+				                		System.out.println("Enter Table name :");
+				                		String tableName = scanner.next();
+				                		System.out.println("Enter Table name :");
+				                		String[] columnNames ; 
+				                		String[] columnTypes;
+				                	}
 				                    break;
 				                case 3:
 				                    // handle Set Invoice Header option

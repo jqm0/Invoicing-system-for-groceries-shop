@@ -13,6 +13,8 @@ public class ShopSetting {
     String DB_URL = "jdbc:sqlserver://localhost:1433;" + "databaseName=HotelDBMS;" + "encrypt=true;"+ "trustServerCertificate=true";
 	String USERNAME = "sa";
 	String PASSWORD = "root";
+	 Database db = new Database(DB_URL, USERNAME, PASSWORD); // create instance of Database class
+
     List<Map<String, Object>> results = new ArrayList<>();
     public ShopSetting() {
         this.shopName = "";
@@ -22,8 +24,7 @@ public class ShopSetting {
 
     public void loadData() throws SQLException {
     	
-        Database db = new Database(DB_URL, USERNAME, PASSWORD); // create instance of Database class
-       db.connectToDb();
+        Database.connectToDb();
        ResultSet rs = db.executeQuery("SELECT * FROM Table_1");
        while (rs.next()) {
            Map<String, Object> row = new HashMap<>();
@@ -38,8 +39,13 @@ public class ShopSetting {
        }
     }
     
-    public void setShopName(String name) {
+    
+    public void setShopName(String name) throws SQLException {
+        Database.connectToDb();
         this.shopName = name;
+        String[] a= {"a","b"};
+        String[] b= {"VARCHAR(15)","VARCHAR(15)"};
+        Database.createTable("names",a, b);
         // save data to database or data structure as needed
     }
     
