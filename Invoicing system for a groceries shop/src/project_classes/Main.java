@@ -1,12 +1,13 @@
 package project_classes;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException, InstantiationException, IllegalAccessException {
 		Menu menu = new Menu();
 		Map<Integer, String> menuItems = MenuItem.mainMenuItems();
 		Scanner scanner = new Scanner(System.in);
@@ -19,6 +20,7 @@ public class Main {
 				case 1:
 				    // Shop Settings menu option
 				    Map<Integer, String> shopSettingsMenuItems = new HashMap<>();
+				    ShopSetting sh = new ShopSetting();
 				    shopSettingsMenuItems.put(1, "Load Data (Items and invoices)");
 				    shopSettingsMenuItems.put(2, "Set Shop Name");
 				    shopSettingsMenuItems.put(3, "Set Invoice Header (Tel / Fax / Email / Website)");
@@ -29,7 +31,8 @@ public class Main {
 				            int shopSettingsChoice = scanner.nextInt();
 				            switch (shopSettingsChoice) {
 				                case 1:
-				                    // handle Load Data option
+				                	
+				                	sh.loadData();
 				                    break;
 				                case 2:
 				                    // handle Set Shop Name option
