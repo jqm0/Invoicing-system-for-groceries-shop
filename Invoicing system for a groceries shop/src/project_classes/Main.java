@@ -18,55 +18,71 @@ public class Main {
 				int choice = scanner.nextInt();
 				switch (choice) {
 				case 1:
-				    // Shop Settings menu option
-				    Map<Integer, String> shopSettingsMenuItems = new HashMap<>();
-				    ShopSetting sh = new ShopSetting();
-				    shopSettingsMenuItems.put(1, "Load Data (Items and invoices)");
-				    shopSettingsMenuItems.put(2, "Set Shop Name");
-				    shopSettingsMenuItems.put(3, "Set Invoice Header (Tel / Fax / Email / Website)");
-				    shopSettingsMenuItems.put(4, "Go Back");
-				    while (true) {
-				        menu.show(shopSettingsMenuItems);
-				        try {
-				            int shopSettingsChoice = scanner.nextInt();
-				            switch (shopSettingsChoice) {
-				                case 1:
-				                	
-				                	sh.loadData();
-				                    break;
-				                case 2:
-				                	System.out.println("Please enter shop name : ");
-				                    sh.setShopName(scanner.next());
-				                	System.out.println("1 - store it in new Table ");
-				                	System.out.println("2 - store it in exicting Table ");
-				                	if(scanner.nextInt() == 1) {
-				                		System.out.println("Enter Table name :");
-				                		String tableName = scanner.next();
-				                		System.out.println("Enter Table name :");
-				                		String[] columnNames ; 
-				                		String[] columnTypes;
-				                	}
-				                    break;
-				                case 3:
-				                    // handle Set Invoice Header option
-				                    break;
-				                case 4:
-				                    // go back to the main menu
-				                    break;
-				                default:
-				                    System.out.println("Invalid choice. Please try again.");
-				                    break;
-				            }
-				            if (shopSettingsChoice == 4) {
-				                break;
-				            }
-				        } catch (InputMismatchException e) {
-				            System.out.println("Invalid input. Please enter a number.");
-				            scanner.next();
-				        }
-				    }
-				    break;
-					
+					// Shop Settings menu option
+					Map<Integer, String> shopSettingsMenuItems = new HashMap<>();
+					ShopSetting sh = new ShopSetting();
+					shopSettingsMenuItems.put(1, "Load Data (Items and invoices)");
+					shopSettingsMenuItems.put(2, "Set Shop Name");
+					shopSettingsMenuItems.put(3, "Set Invoice Header (Tel / Fax / Email / Website)");
+					shopSettingsMenuItems.put(4, "Go Back");
+					while (true) {
+						menu.show(shopSettingsMenuItems);
+						try {
+							int shopSettingsChoice = scanner.nextInt();
+							switch (shopSettingsChoice) {
+							case 1:
+								System.out.println("Enter table name to be loaded : ");
+								String tableN = scanner.next();
+								sh.loadData(tableN);
+									
+								break;
+							case 2:
+								Database.connectToDb();
+								System.out.println("Please enter shop name: ");
+								sh.setShopName(scanner.next());
+								System.out.println("1 - store it in new Table ");
+								System.out.println("2 - store it in existing Table ");
+								int option = scanner.nextInt();
+								if (option == 1) {
+									System.out.println("Enter table name: ");
+									String tableName = scanner.next();
+									System.out.println("Enter column names (separated by commas): ");
+									String columnNamesStr = scanner.next();
+									String[] columnNames = columnNamesStr.split(",");
+									System.out.println("Enter column types (separated by commas): ");
+									String columnTypesStr = scanner.next();
+									String[] columnTypes = columnTypesStr.split(",");
+									Database.createTable(tableName, columnNames, columnTypes);
+									Database.insert(tableName, sh.getShopName());
+								} else if (option == 2) {
+									System.out.println("Enter table name: ");
+									String tableName = scanner.next();
+									Database.insert(tableName, sh.getShopName());
+								} else {
+									System.out.println("Invalid option selected.");
+								}
+								break;
+
+							case 3:
+								// handle Set Invoice Header option
+								break;
+							case 4:
+								// go back to the main menu
+								break;
+							default:
+								System.out.println("Invalid choice. Please try again.");
+								break;
+							}
+							if (shopSettingsChoice == 4) {
+								break;
+							}
+						} catch (InputMismatchException e) {
+							System.out.println("Invalid input. Please enter a number.");
+							scanner.next();
+						}
+					}
+					break;
+
 				case 2:
 					// handle Manage Shop Items menu option
 					break;

@@ -1,6 +1,7 @@
 package project_classes;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,22 +23,23 @@ public class ShopSetting {
         new HashMap<>();
     }
 
-    public void loadData() throws SQLException {
-    	
+    public void loadData(String tableName) throws SQLException {
         Database.connectToDb();
-       ResultSet rs = db.executeQuery("SELECT * FROM Table_1");
-       while (rs.next()) {
-           Map<String, Object> row = new HashMap<>();
-           row.put("column1", rs.getObject("name"));
-           row.put("column2", rs.getObject("roll"));
-           // add more columns as needed
-           results.add(row);
-      
-       }
-       for(Map<String, Object> a : results) {
-    	   System.out.println(a);
-       }
+        ResultSet rs = db.executeQuery("SELECT * FROM " + tableName);
+		ResultSetMetaData metadata = rs.getMetaData();
+        int columnCount = metadata.getColumnCount();
+        while (rs.next()) {
+            Map<String, Object> row = new HashMap<>();
+            for (int i = 1; i <= columnCount; i++) {
+                row.put(metadata.getColumnName(i), rs.getObject(i));
+            }
+            results.add(row);
+        }
+        for (Map<String, Object> row : results) {
+            System.out.println(row);
+        }
     }
+
     
     
     public void setShopName(String name) throws SQLException {
@@ -45,11 +47,16 @@ public class ShopSetting {
         this.shopName = name;
         String[] a= {"a","b"};
         String[] b= {"VARCHAR(15)","VARCHAR(15)"};
-        Database.createTable("names",a, b);
+        
         // save data to database or data structure as needed
     }
     
-    public void setInvoiceHeader(String tel, String fax, String email, String website) {
+    
+    public String getShopName() {
+		return shopName;
+	}
+
+	public void setInvoiceHeader(String tel, String fax, String email, String website) {
         this.invoiceHeader = "Tel: " + tel + ", Fax: " + fax + ", Email: " + email + ", Website: " + website;
         // save data to database or data structure as needed
     }

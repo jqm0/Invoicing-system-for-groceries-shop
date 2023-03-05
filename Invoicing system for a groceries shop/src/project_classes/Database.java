@@ -1,6 +1,7 @@
 package project_classes;
 
 import java.sql.*;
+import java.util.Scanner;
 
 public class Database {
 	private static Connection conn = null;
@@ -13,6 +14,12 @@ public class Database {
 		this.username = username;
 		this.password = password;
 	}
+	
+
+	public Database() {
+		super();
+	}
+
 
 	public static Connection connectToDb() {
 		try {
@@ -29,17 +36,16 @@ public class Database {
 	}
 
 	public static void createTable(String tableName, String[] columnNames, String[] columnTypes) throws SQLException {
-		String sql = "CREATE TABLE " + tableName + " (";
-		for (int i = 0; i < columnNames.length; i++) {
-			sql += columnNames[i] + " " + columnTypes[i];
-			if (i < columnNames.length - 1) {
-				sql += ",";
-			}
-		}
-		sql += ")";
-		Statement statement = conn.createStatement();
-		statement.executeUpdate(sql);
+	    StringBuilder sb = new StringBuilder();
+	    for (int i = 0; i < columnNames.length; i++) {
+	        sb.append(columnNames[i]).append(" ").append(columnTypes[i]).append(",");
+	    }
+	    sb.deleteCharAt(sb.length() - 1);
+
+	    String sql = "CREATE TABLE " + tableName + " (" + sb.toString() + ")";
+	    executeUpdate(sql);
 	}
+
 
 	public void disconnect() throws SQLException {
 		if (conn != null && !conn.isClosed()) {
@@ -52,8 +58,16 @@ public class Database {
 		return statement.executeQuery(sql);
 	}
 
-	public int executeUpdate(String sql) throws SQLException {
+	public static int executeUpdate(String sql) throws SQLException {
 		Statement statement = conn.createStatement();
 		return statement.executeUpdate(sql);
 	}
+
+	public static void insert(String tableName, String value) throws SQLException {
+	    String sql = "INSERT INTO " + tableName + " VALUES (?)";
+	    PreparedStatement statement = conn.prepareStatement(sql);
+	    statement.setString(1, value);
+	    statement.executeUpdate();
+	}
+
 }
