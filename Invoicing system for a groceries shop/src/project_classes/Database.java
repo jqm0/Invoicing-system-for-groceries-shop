@@ -69,6 +69,15 @@ public class Database {
 	    statement.setString(1, value);
 	    statement.executeUpdate();
 	}
-	
+	public static boolean isTableExists(String tableName) throws SQLException {
+	    boolean tableExists = false;
+	    DatabaseMetaData meta = conn.getMetaData();
+	    ResultSet resultSet = meta.getTables(null, null, tableName, new String[] {"TABLE"});
+	    if (resultSet.next()) {
+	        tableExists = true;
+	    }
+	    return tableExists;
+	}
+
 
 }

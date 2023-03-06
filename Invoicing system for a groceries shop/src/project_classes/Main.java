@@ -34,7 +34,7 @@ public class Main {
 								System.out.println("Enter table name to be loaded : ");
 								String tableN = scanner.next();
 								sh.loadData(tableN);
-									
+
 								break;
 							case 2:
 								Database.connectToDb();
@@ -65,15 +65,15 @@ public class Main {
 
 							case 3:
 								System.out.print("Enter tel: ");
-								String tel = scanner.nextLine();
+								String tel = scanner.next();
 								System.out.print("Enter fax: ");
-								String fax = scanner.nextLine();
+								String fax = scanner.next();
 								System.out.print("Enter email: ");
-								String email = scanner.nextLine();
+								String email = scanner.next();
 								System.out.print("Enter website: ");
-								String website = scanner.nextLine();
-								sh.setInvoiceHeader(tel,  fax, email, website);
-								
+								String website = scanner.next();
+								sh.setInvoiceHeader(tel, fax, email, website);
+
 								break;
 							case 4:
 								// go back to the main menu
@@ -93,9 +93,18 @@ public class Main {
 					break;
 
 				case 2:
-					// handle Manage Shop Items menu option
+					// Manage Shop Items
+					System.out.println("You selected : Manage Shop Items\n");
+
+					// create Shop object
+					Shop shop = new Shop();
+					shop.manageShopItems();
+
+					// save shop items to database
+
 					break;
 				case 3:
+
 					// handle Create New Invoice menu option
 					break;
 				case 4:
