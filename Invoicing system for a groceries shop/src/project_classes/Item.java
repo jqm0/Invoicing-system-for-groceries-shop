@@ -6,6 +6,20 @@ public class Item {
 	Integer id;
 	Integer quantity;
 	Integer qtyAmountPrice;
+	
+	public Item(String name, Integer unitPrice, Integer id, Integer quantity, Integer qtyAmountPrice) {
+		super();
+		this.name = name;
+		this.unitPrice = unitPrice;
+		this.id = id;
+		this.quantity = quantity;
+		this.qtyAmountPrice = qtyAmountPrice;
+	}
+	
+	public Item() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public void setName(String string) {
 		// TODO Auto-generated method stub
 		

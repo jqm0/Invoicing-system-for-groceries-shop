@@ -8,7 +8,7 @@ public class Shop {
 	private Connection conn;
 	private ArrayList<Item> itemList;
 
-	public Shop() {
+	public Shop() throws SQLException {
 		try {
 			String url = "jdbc:sqlserver://localhost:1433;" + "databaseName=Invoicing System;" + "encrypt=true;"
 					+ "trustServerCertificate=true";
@@ -20,6 +20,11 @@ public class Shop {
 			System.out.println(e.getMessage());
 		}
 		itemList = new ArrayList<>();
+		if (!isTableExists("items")) {
+			createItemsTable();
+		}
+
+		loadItemsFromDatabase();
 	}
 
 	public void manageShopItems() throws SQLException {
@@ -83,9 +88,23 @@ public class Shop {
 				break;
 
 			case 3:
-				// TODO: implement remove item
-				System.out.println("Remove Item selected");
+				System.out.print("Enter item ID to remove: ");
+				int removeItemId = input.nextInt();
+				input.nextLine(); // consume the newline character
+				Item itemToRemove = shop.searchItemById(removeItemId);
+				if (itemToRemove != null) {
+					try {
+						shop.removeItem(removeItemId);
+						System.out.println("Item removed successfully.");
+					} catch (SQLException e) {
+						System.out.println("Error removing item from database.");
+						e.printStackTrace();
+					}
+				} else {
+					System.out.println("Item not found.");
+				}
 				break;
+
 			case 4:
 				System.out.println("Exiting Shop Item Menu...");
 				break;
@@ -104,6 +123,25 @@ public class Shop {
 			}
 		}
 		return null;
+	}
+
+	private void loadItemsFromDatabase() throws SQLException {
+		String sql = "SELECT * FROM items";
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		ResultSet rs = stmt.executeQuery();
+
+		while (rs.next()) {
+			int id = rs.getInt("id");
+			String name = rs.getString("name");
+			int quantity = rs.getInt("quantity");
+			int unitPrice = rs.getInt("unitPrice");
+			int qtyAmountPrice = rs.getInt("qtyAmountPrice");
+
+			Item newItem = new Item(name, id, quantity, unitPrice, qtyAmountPrice);
+			itemList.add(newItem);
+		}
+
+		stmt.close();
 	}
 
 	public void addItem(Item newItem) throws SQLException {
@@ -125,6 +163,24 @@ public class Shop {
 		itemList.add(newItem);
 	}
 
+	public void removeItem(int itemId) throws SQLException {
+		if (!isTableExists("items")) {
+			createItemsTable();
+		}
+		Item itemToRemove = searchItemById(itemId);
+		if (itemToRemove != null) {
+			String sql = "DELETE FROM items WHERE id = ?";
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, itemId);
+			stmt.executeUpdate();
+			stmt.close();
+			itemList.remove(itemToRemove);
+			System.out.println("Item removed successfully.");
+		} else {
+			System.out.println("Item not found.");
+		}
+	}
+
 	private boolean isTableExists(String tableName) throws SQLException {
 		DatabaseMetaData meta = conn.getMetaData();
 		ResultSet tables = meta.getTables(null, null, tableName, null);
@@ -137,11 +193,6 @@ public class Shop {
 				+ "    unitPrice INTEGER,\n" + "    qtyAmountPrice INTEGER\n" + ");";
 		stmt.execute(sql);
 		System.out.println("Table 'items' created successfully.");
-	}
-
-	public void load() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void editItem(Item itemToEdit) throws SQLException {
