@@ -104,7 +104,7 @@ public class Main {
 
 					break;
 				case 3:
-
+					
 					// handle Create New Invoice menu option
 					break;
 				case 4:

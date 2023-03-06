@@ -91,7 +91,5 @@ public class ShopSetting {
     public void goBack() {
         // go back to main menu
     }
-    
-    // other methods as needed
-    
+
 }

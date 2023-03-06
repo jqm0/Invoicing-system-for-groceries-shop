@@ -22,8 +22,9 @@ public class Shop {
 		itemList = new ArrayList<>();
 	}
 
-	public void manageShopItems() {
+	public void manageShopItems() throws SQLException {
 		Scanner input = new Scanner(System.in);
+		Shop shop = new Shop();
 		int choice = 0;
 
 		while (choice != 4) {
@@ -55,10 +56,32 @@ public class Shop {
 					System.out.println(e.getMessage());
 				}
 				break;
+
 			case 2:
-				// TODO: implement edit item
-				System.out.println("Edit Item selected");
+				System.out.print("Enter item ID to edit: ");
+				int editItemId = input.nextInt();
+				input.nextLine(); // consume the newline character
+				Item itemToEdit = shop.searchItemById(editItemId);
+				if (itemToEdit != null) {
+					System.out.print("Enter new name: ");
+					String newName = input.nextLine();
+					System.out.print("Enter new quantity: ");
+					int newQuantity = input.nextInt();
+					System.out.print("Enter new unit price: ");
+					int newUnitPrice = input.nextInt();
+					System.out.print("Enter new quantity amount price: ");
+					int newQtyAmountPrice = input.nextInt();
+					itemToEdit.setName(newName);
+					itemToEdit.setQuantity(newQuantity);
+					itemToEdit.setUnitPrice(newUnitPrice);
+					itemToEdit.setQtyAmountPrice(newQtyAmountPrice);
+					shop.editItem(itemToEdit);
+					System.out.println("Item edited successfully.");
+				} else {
+					System.out.println("Item not found.");
+				}
 				break;
+
 			case 3:
 				// TODO: implement remove item
 				System.out.println("Remove Item selected");
@@ -73,12 +96,22 @@ public class Shop {
 		}
 	}
 
+	public Item searchItemById(int id) {
+		for (Item item : itemList) {
+			if (item.getId() == id) {
+				System.out.println("Found item with ID " + id);
+				return item;
+			}
+		}
+		return null;
+	}
+
 	public void addItem(Item newItem) throws SQLException {
 		if (!isTableExists("items")) {
 			System.out.println(" ... Create items Table because items Table Not exist .. ");
 			createItemsTable();
 		}
-	
+
 		String sql = "INSERT INTO items (name, id, quantity, unitPrice, qtyAmountPrice) VALUES (?, ?, ?, ?, ?)";
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setString(1, newItem.getName());
@@ -110,4 +143,17 @@ public class Shop {
 		// TODO Auto-generated method stub
 
 	}
+
+	public void editItem(Item itemToEdit) throws SQLException {
+		String sql = "UPDATE items SET name=?, quantity=?, unitPrice=?, qtyAmountPrice=? WHERE id=?";
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setString(1, itemToEdit.getName());
+		stmt.setInt(2, itemToEdit.getQuantity());
+		stmt.setInt(3, itemToEdit.getUnitPrice());
+		stmt.setInt(4, itemToEdit.getQtyAmountPrice());
+		stmt.setInt(5, itemToEdit.getId());
+		stmt.executeUpdate();
+		stmt.close();
+	}
+
 }
