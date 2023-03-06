@@ -64,7 +64,16 @@ public class Main {
 								break;
 
 							case 3:
-								// handle Set Invoice Header option
+								System.out.print("Enter tel: ");
+								String tel = scanner.nextLine();
+								System.out.print("Enter fax: ");
+								String fax = scanner.nextLine();
+								System.out.print("Enter email: ");
+								String email = scanner.nextLine();
+								System.out.print("Enter website: ");
+								String website = scanner.nextLine();
+								sh.setInvoiceHeader(tel,  fax, email, website);
+								
 								break;
 							case 4:
 								// go back to the main menu

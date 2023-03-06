@@ -69,5 +69,6 @@ public class Database {
 	    statement.setString(1, value);
 	    statement.executeUpdate();
 	}
+	
 
 }
