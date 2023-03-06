@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Shop {
 	private Connection conn;
-	private ArrayList<Item> itemList;
+	public ArrayList<Item> itemList;
 
 	public Shop() throws SQLException {
 		try {
@@ -16,6 +16,7 @@ public class Shop {
 			String password = "root";
 			conn = DriverManager.getConnection(url, user, password);
 			System.out.println("Connection has been established.");
+			System.out.println("--------------------------------");
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
