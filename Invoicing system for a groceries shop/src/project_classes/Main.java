@@ -128,7 +128,9 @@ public class Main {
 						break;
 					case 6:
 						countCase6 ++;
-						// handle Search (1) Invoice menu option
+						System.out.println("Enter Your Phone number to search your invoice : ");
+						Invoice.searchInvoiceByPhoneNumber(scanner.nextInt());
+
 						break;
 					case 7:
 						countCase7 ++;

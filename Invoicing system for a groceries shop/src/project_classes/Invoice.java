@@ -100,4 +100,57 @@ public class Invoice {
 			}
 		}
 	}
+	public static void searchInvoiceByPhoneNumber(int phoneNumber) throws SQLException {
+	    String url = "jdbc:sqlserver://localhost:1433;" + "databaseName=Invoicing System;" + "encrypt=true;"
+	        + "trustServerCertificate=true";
+	    String user = "sa";
+	    String pass = "root";
+
+	    Connection con = null;
+	    try {
+	        Driver driver = (Driver) Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver").newInstance();
+	        DriverManager.registerDriver(driver);
+
+	        con = DriverManager.getConnection(url, user, pass);
+
+	        // Check if the table exists
+	        DatabaseMetaData metadata = con.getMetaData();
+	        ResultSet resultSet = metadata.getTables(null, null, "CUSTOMER_INVOICE", null);
+	        if (!resultSet.next()) {
+	            System.err.println("Table not found");
+	            return;
+	        }
+
+	        String sql = "SELECT * FROM CUSTOMER_INVOICE WHERE Phone_Number=?";
+	        PreparedStatement ps = con.prepareStatement(sql);
+	        ps.setInt(1, phoneNumber);
+
+	        resultSet = ps.executeQuery();
+
+	        if (resultSet.next()) {
+	            System.out.println(" ======================= Invoice Details =======================");
+	            System.out.println("Customer Full Name: " + resultSet.getString("Customer_Full_Name"));
+	            System.out.println("Phone Number: " + resultSet.getInt("Phone_Number"));
+	            System.out.println("Invoice Date: " + resultSet.getString("Invoice_Date"));
+	            System.out.println("Number of Items: " + resultSet.getInt("Number_Of_Items"));
+	            System.out.println("Total Amount: " + resultSet.getFloat("Total_Amount"));
+	            System.out.println("Paid Amount: " + resultSet.getFloat("Paid_Amount"));
+	            System.out.println("Balance: " + resultSet.getFloat("Balance"));
+	            System.out.println("================================================================== ");
+	        } else {
+	            System.err.println("Invoice not found");
+	        }
+	    } catch (Exception ex) {
+	        System.err.println(ex);
+	    } finally {
+	        if (con != null) {
+	            try {
+	                con.close();
+	            } catch (SQLException e) {
+	                System.err.println(e);
+	            }
+	        }
+	    }
+	}
+
 }
