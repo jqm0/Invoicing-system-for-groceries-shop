@@ -18,11 +18,29 @@ public class Main {
 		Integer countCase6 = 0;
 		Integer countCase7 = 0;
 		Integer countCase8 = 0;
-
+		String url = "jdbc:sqlserver://localhost:1433;" + "databaseName=Invoicing System;" + "encrypt=true;"
+				+ "trustServerCertificate=true";
 		Menu menu = new Menu();
+		boolean enterMainMenu = true;
 		Map<Integer, String> menuItems = MenuItem.mainMenuItems();
 		try (Scanner scanner = new Scanner(System.in)) {
-			while (true) {
+			System.out.println("1 - If You Want enter new connection");
+			System.out.println("2 - use defualt connection");
+			if (scanner.nextInt() == 1) {
+				System.out.print("Please Enter User Name: ");
+				String user = scanner.next();
+				System.out.print("Please Enter Password: ");
+				String pass = scanner.next();
+				
+				if (Database.connectToDb(user, pass,url) == null) {
+					enterMainMenu = false;
+					System.out.println("------- Wrong Information -------");
+				}
+
+			} else {
+				Database.connectToDb();
+			}
+			while (enterMainMenu) {
 				menu.show(menuItems);
 
 				try {
@@ -50,7 +68,7 @@ public class Main {
 
 									break;
 								case 2:
-									Database.connectToDb();
+
 									System.out.println("Please enter shop name: ");
 									sh.setShopName(scanner.next());
 									System.out.println("1 - store it in new Table ");
@@ -107,33 +125,32 @@ public class Main {
 
 					case 2:
 						// Manage Shop Items
-						countCase2 ++;
+						countCase2++;
 						System.out.println("You selected : Manage Shop Items\n");
 						Shop shop = new Shop();
 						shop.manageShopItems();
 
 						break;
 					case 3:
-						countCase3 ++;
+						countCase3++;
 						Invoice newInvoice = new Invoice();
 						Invoice.createNewInvoice();
 						break;
 					case 4:
-						countCase4 ++;
-						// handle Report: Statistics menu option
+						countCase4++;
+						Invoice.statisticsReport();
 						break;
 					case 5:
-						countCase5 ++;
-						// handle Report: All Invoices menu option
+						countCase5++;
+						Invoice.displayAllInvoices();
 						break;
 					case 6:
-						countCase6 ++;
-						System.out.println("Enter Your Phone number to search your invoice : ");
-						Invoice.searchInvoiceByPhoneNumber(scanner.nextInt());
+						countCase6++;
+						Invoice.searchInvoiceById();
 
 						break;
 					case 7:
-						countCase7 ++;
+						countCase7++;
 						System.out.println("===== Program Statistics for current Run =====");
 						System.out.println("The option 1 has been entered " + countCase1 + " Times " + "\r\n"
 								+ "The option 2 has been entered " + countCase2 + " Times " + "\r\n"
@@ -144,7 +161,7 @@ public class Main {
 								+ "The option 7 has been entered " + countCase7 + " Times " + "\r\n");
 						break;
 					case 8:
-						countCase8 ++;
+						countCase8++;
 						System.out.println("Are you sure you want to exit? (Y/N)");
 						String confirm = scanner.next();
 						if (confirm.equalsIgnoreCase("Y")) {

@@ -34,7 +34,7 @@ public class Database {
 		System.out.println(conn);
 		return conn;
 	}
-
+	 
 	public static void createTable(String tableName, String[] columnNames, String[] columnTypes) throws SQLException {
 	    StringBuilder sb = new StringBuilder();
 	    for (int i = 0; i < columnNames.length; i++) {
@@ -77,6 +77,19 @@ public class Database {
 	        tableExists = true;
 	    }
 	    return tableExists;
+	}
+
+
+	public static Connection connectToDb(String user, String pass, String url) {
+		try {
+		
+			conn = DriverManager.getConnection(url, user, pass);
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		System.out.println(conn);
+		return conn;
+		
 	}
 
 
