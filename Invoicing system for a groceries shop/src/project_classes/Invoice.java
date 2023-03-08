@@ -1,11 +1,15 @@
 package project_classes;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -20,107 +24,80 @@ public class Invoice {
 	Integer idInvoice;
 	Integer txtFileCount = 1;
 
-	public void createNewInvoice() throws SQLException {
-		Report rep = new Report();
-		boolean choice = true;
-		Scanner sc = new Scanner(System.in);
-		Shop shopX = new Shop();
-		System.out.print("Enter Shop name : ");
+	public static void createNewInvoice() throws IOException, InterruptedException {
+		String url = "jdbc:sqlserver://localhost:1433;" + "databaseName=Invoicing System;" + "encrypt=true;"
+				+ "trustServerCertificate=true";
+		String user = "sa";
+		String pass = "root";
+
+		Scanner sa = new Scanner(System.in);
+		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+
 		
-		String shopName = sc.next();
-		Invoice invoiceX = new Invoice();
-		System.out.print("Enter customer Full Name : ");
-		customerFullName = sc.next();
-		System.out.print("Enter phone Number : ");
-		invoiceX.phoneNumber = sc.nextInt();
+		System.out.println(" - How many invoice You want to store ?");
+		int numberOfInvoices = sa.nextInt();
 
-		while (choice) {
-			Item itemX = new Item();
-			System.out.print("Enter Item Name : ");
-			itemX.name = sc.next();
-			System.out.print("Enter Item id : ");
-			itemX.id = sc.nextInt();
-			idInvoice = itemX.id;
-			System.out.print("Enter unitPrice : ");
-			itemX.unitPrice = sc.nextInt();
-			System.out.print("Enter quantity : ");
-			itemX.quantity = sc.nextInt();
-			itemX.qtyAmountPrice = itemX.unitPrice * itemX.quantity;
-			shopX.itemList.add(itemX);
-			numberOfItems++;
-			System.out.print("Do You Want Add Anouther Item write 1 if yes .. : ");
-			if (sc.nextInt() != 1) {
-				choice = false;
-
-			}
-		}
-		System.out.println("---------------- Invoice Details ----------------");
-		Integer total = 0;
-
-		for (Item i : shopX.itemList) {
-			System.out.println("=====================");
-			System.out.println("Item name : " + i.name);
-			System.out.println("Item ID : " + i.id);
-			System.out.println("Item quantity : " + i.quantity);
-			System.out.println("Item unitPrice : " + i.unitPrice);
-			System.out.println("Total Price for this Item " + i.qtyAmountPrice);
-			total = total + i.qtyAmountPrice;
-		}
-		totalAmount = total;
-
-		System.out.println("======================");
-		System.out.println("Total Price : " + total);
-		System.out.println("---------------------");
-		System.out.print(" >> Enter paid Amount :");
-		paidAmount = sc.nextInt();
-		balance = paidAmount - totalAmount;
-		System.out.println("======================");
-		System.out.println("Balance : " + balance);
-		sc.close();
-		//rep.invoicesList.add(invoiceX);
-		// _________________________________________
-
+		Connection con = null;
 		try {
-			String url = "jdbc:sqlserver://localhost:1433;" + "databaseName=Invoicing System;" + "encrypt=true;"
-					+ "trustServerCertificate=true";
-			String user = "sa";
-			String password = "root";
-			// Create connection to database
-			Connection connection = DriverManager.getConnection(url, user, password);
+			Driver driver = (Driver) Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver").newInstance();
+			DriverManager.registerDriver(driver);
 
-			// Check if invoice table exists, if not create it
-			Statement statement = connection.createStatement();
-			String checkTableQuery = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'invoice';";
-			ResultSet checkTableResult = statement.executeQuery(checkTableQuery);
-			checkTableResult.next();
-			int tableCount = checkTableResult.getInt(1);
-			if (tableCount == 0) {
-				String createTableQuery = "CREATE TABLE invoice (" + "id INT NOT NULL IDENTITY(1,1),"
-						+ "customer_fullname VARCHAR(255) NOT NULL," + "phone_number VARCHAR(50) NOT NULL,"
-						+ "invoice_date DATE NOT NULL," + "number_of_items INT NOT NULL," + "total_amount INT NOT NULL,"
-						+ "paid_amount INT NOT NULL," + "balance INT NOT NULL," + "PRIMARY KEY(id)" + ");";
-				statement.execute(createTableQuery);
+			con = DriverManager.getConnection(url, user, pass);
+
+			// Check if the table exists
+			DatabaseMetaData metadata = con.getMetaData();
+			ResultSet resultSet = metadata.getTables(null, null, "CUSTOMER_INVOICE", null);
+			if (!resultSet.next()) {
+				// If the table does not exist, create it
+				String createTableSql = "CREATE TABLE CUSTOMER_INVOICE (" + "Invoice_ID INT IDENTITY(1,1) PRIMARY KEY,"
+						+ "Customer_Full_Name VARCHAR(255)," + "Phone_Number INT," + "Invoice_Date VARCHAR(255),"
+						+ "Number_Of_Items INT," + "Total_Amount FLOAT," + "Paid_Amount FLOAT," + "Balance FLOAT" + ")";
+				PreparedStatement createTableStatement = con.prepareStatement(createTableSql);
+				createTableStatement.executeUpdate();
+				System.out.println("Table created successfully");
 			}
+			
+			for (int i = 0; i < numberOfInvoices; i++) {
+				System.out.println("-------------- Invoice " + (i+1) + "---------------");
+				System.out.println("Please Enter Customer's Full Name:");
+				String customerName = bf.readLine();
+				System.out.println("Please Enter Customer's Phone Number:");
+				int phoneNumber = sa.nextInt();
+				System.out.println("Please Enter Invoice Date:");
+				String invoiceDate = sa.next();
+				System.out.println("Please Enter Number of Items:");
+				int numberOfItems = sa.nextInt();
+				System.out.println("Please Enter Total Amount:");
+				float totalAmount = sa.nextFloat();
+				System.out.println("Please Enter Paid Amount:");
+				float paidAmount = sa.nextFloat();
+				float balance = paidAmount - totalAmount;
 
-			// Insert invoice data into database
-			String insertQuery = "INSERT INTO invoice (customer_fullname, phone_number, invoice_date, number_of_items, total_amount, paid_amount, balance) VALUES (?, ?, ?, ?, ?, ?, ?);";
-			PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
-			preparedStatement.setString(1, customerFullName);
-			preparedStatement.setInt(2, invoiceX.phoneNumber);
-			Date date = new Date();
-			preparedStatement.setDouble(3, date.getTime());
-			preparedStatement.setInt(4, numberOfItems);
-			preparedStatement.setInt(5, totalAmount);
-			preparedStatement.setInt(6, paidAmount);
-			preparedStatement.setInt(7, balance);
-			preparedStatement.executeUpdate();
+				String sql = "INSERT INTO CUSTOMER_INVOICE(Customer_Full_Name,Phone_Number,Invoice_Date,Number_Of_Items,Total_Amount,Paid_Amount,Balance) VALUES(?,?,?,?,?,?,?)";
 
-			// Close connection to database
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+				PreparedStatement ps = con.prepareStatement(sql);
+
+				ps.setString(1, customerName);
+				ps.setInt(2, phoneNumber);
+				ps.setString(3, invoiceDate);
+				ps.setInt(4, numberOfItems);
+				ps.setFloat(5, totalAmount);
+				ps.setFloat(6, paidAmount);
+				ps.setFloat(7, balance);
+				ps.executeUpdate();
+
+				System.out.println(" Data successfully inserted");
+			}
+		} catch (Exception ex) {
+			System.err.println(ex);
+		} finally {
+			if (con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					System.err.println(e);
+				}
+			}
 		}
-
 	}
-
 }

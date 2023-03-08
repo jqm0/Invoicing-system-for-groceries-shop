@@ -1,5 +1,6 @@
 package project_classes;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.InputMismatchException;
@@ -7,7 +8,17 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
-	public static void main(String[] args) throws SQLException, InstantiationException, IllegalAccessException {
+	public static void main(String[] args)
+			throws SQLException, InstantiationException, IllegalAccessException, IOException, InterruptedException {
+		Integer countCase1 = 0;
+		Integer countCase2 = 0;
+		Integer countCase3 = 0;
+		Integer countCase4 = 0;
+		Integer countCase5 = 0;
+		Integer countCase6 = 0;
+		Integer countCase7 = 0;
+		Integer countCase8 = 0;
+
 		Menu menu = new Menu();
 		Map<Integer, String> menuItems = MenuItem.mainMenuItems();
 		try (Scanner scanner = new Scanner(System.in)) {
@@ -18,6 +29,8 @@ public class Main {
 					int choice = scanner.nextInt();
 					switch (choice) {
 					case 1:
+						countCase1++;
+
 						// Shop Settings menu option
 						Map<Integer, String> shopSettingsMenuItems = new HashMap<>();
 						ShopSetting sh = new ShopSetting();
@@ -94,29 +107,42 @@ public class Main {
 
 					case 2:
 						// Manage Shop Items
+						countCase2 ++;
 						System.out.println("You selected : Manage Shop Items\n");
 						Shop shop = new Shop();
 						shop.manageShopItems();
 
 						break;
 					case 3:
-
+						countCase3 ++;
 						Invoice newInvoice = new Invoice();
-						newInvoice.createNewInvoice();
+						Invoice.createNewInvoice();
 						break;
 					case 4:
+						countCase4 ++;
 						// handle Report: Statistics menu option
 						break;
 					case 5:
+						countCase5 ++;
 						// handle Report: All Invoices menu option
 						break;
 					case 6:
+						countCase6 ++;
 						// handle Search (1) Invoice menu option
 						break;
 					case 7:
-						// handle Program Statistics menu option
+						countCase7 ++;
+						System.out.println("===== Program Statistics for current Run =====");
+						System.out.println("The option 1 has been entered " + countCase1 + " Times " + "\r\n"
+								+ "The option 2 has been entered " + countCase2 + " Times " + "\r\n"
+								+ "The option 3 has been entered " + countCase3 + " Times " + "\r\n"
+								+ "The option 4 has been entered " + countCase4 + " Times " + "\r\n"
+								+ "The option 5 has been entered " + countCase5 + " Times " + "\r\n"
+								+ "The option 6 has been entered " + countCase6 + " Times " + "\r\n"
+								+ "The option 7 has been entered " + countCase7 + " Times " + "\r\n");
 						break;
 					case 8:
+						countCase8 ++;
 						System.out.println("Are you sure you want to exit? (Y/N)");
 						String confirm = scanner.next();
 						if (confirm.equalsIgnoreCase("Y")) {
