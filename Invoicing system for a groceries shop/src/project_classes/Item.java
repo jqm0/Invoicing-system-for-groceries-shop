@@ -21,7 +21,7 @@ public class Item {
 	}
 
 	public void setName(String string) {
-		// TODO Auto-generated method stub
+		this.name = string;
 		
 	}
 	public Integer getUnitPrice() {

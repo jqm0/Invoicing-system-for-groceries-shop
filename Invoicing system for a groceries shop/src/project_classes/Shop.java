@@ -55,8 +55,7 @@ public class Shop {
 					newItem.setQuantity(input.nextInt());
 					System.out.print("Enter item unit price: ");
 					newItem.setUnitPrice(input.nextInt());
-					System.out.print("Enter item quantity amount price: ");
-					newItem.setQtyAmountPrice(input.nextInt());
+					newItem.setQtyAmountPrice(newItem.getUnitPrice() * newItem.getQuantity());
 					addItem(newItem);
 				} catch (SQLException e) {
 					System.out.println(e.getMessage());

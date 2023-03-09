@@ -38,9 +38,23 @@ public class ShopSetting {
                 }
                 results.add(row);
             }
+            System.out.println(
+					"--------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println(
+					"unitPrice\tquantity\tname\t\tID\tQtyAmountPrice");
+            System.out.println(
+    					"--------------------------------------------------------------------------------------------------------------------------------"); 
             for (Map<String, Object> row : results) {
-                System.out.println(row);
+                StringBuilder sb = new StringBuilder();
+                for (Object value : row.values()) {
+                    sb.append(value.toString()).append("\t\t");
+                }
+                String values = sb.toString().trim();
+                System.out.println(values);
             }
+
+            System.out.println(
+					"--------------------------------------------------------------------------------------------------------------------------------"); 
         } catch (SQLException e) {
             System.err.println("Error: Table " + tableName + " does not exist in the database");
             e.printStackTrace();
